@@ -119,7 +119,7 @@
 
         # updated_at DATETIME NOT NULL
 
-    ● threads
+    ● additions
 
         # id INTEGER PRIMARY KEY AUTOINCREMENT
 
@@ -139,11 +139,11 @@
 
         # idx_memos_pinned_created_at (is_pinned, created_at DESC)
 
-    ● threads
+    ● additions
 
-        # idx_threads_memo_id (memo_id)
+        # idx_additions_memo_id (memo_id)
 
-        # idx_threads_memo_id_created_at (memo_id, created_at ASC)
+        # idx_additions_memo_id_created_at (memo_id, created_at ASC)
 
 ■ 全文検索
 
@@ -212,9 +212,9 @@
 
     ● Phase2
 
-        # スレッド機能追加
+        # 追記機能追加
 
-        # スレッド投稿・一覧表示
+        # 追記投稿・一覧表示
 
     ● Phase3
 
