@@ -7,6 +7,8 @@ import '../../utils/date_formatter.dart';
 import '../addition/addition_drawer.dart';
 import '../common/resize_handle.dart';
 import 'memo_input_bar.dart';
+import 'memo_search_bar.dart';
+import 'pinned_memo_list.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -50,6 +52,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
       body: Column(
         children: [
+          const MemoSearchBar(),
+          const PinnedMemoList(),
+          const Divider(height: 1),
           Expanded(child: _MemoTimeline()),
           const Divider(height: 1),
           const MemoInputBar(),
@@ -64,10 +69,18 @@ class _MemoTimeline extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final memosAsync = ref.watch(memoListProvider);
 
+    final searchQuery = ref.watch(searchQueryProvider);
+
     return memosAsync.when(
       data: (memos) {
         if (memos.isEmpty) {
-          return const Center(child: Text('まだメモがありません'));
+          return Center(
+            child: Text(
+              searchQuery.trim().isEmpty
+                  ? 'まだメモがありません'
+                  : '見つかりませんでした',
+            ),
+          );
         }
         return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -95,6 +108,10 @@ class _MemoTile extends ConsumerWidget {
     return ListTile(
       title: Text(memo.content),
       subtitle: Text(formatDateTime(memo.createdAt)),
+      trailing: IconButton(
+        icon: Icon(memo.isPinned ? Icons.push_pin : Icons.push_pin_outlined),
+        onPressed: () => ref.read(memoControllerProvider.notifier).togglePin(memo),
+      ),
       onTap: () {
         ref.read(selectedMemoProvider.notifier).select(memo);
         Scaffold.of(context).openEndDrawer();

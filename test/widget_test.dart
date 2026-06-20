@@ -16,6 +16,9 @@ void main() {
           memoListProvider.overrideWith(
             (ref) => Stream.value(const <Memo>[]),
           ),
+          pinnedMemoListProvider.overrideWith(
+            (ref) => Stream.value(const <Memo>[]),
+          ),
         ],
         child: const ScrapMemoApp(),
       ),
@@ -23,6 +26,8 @@ void main() {
     await tester.pump();
 
     expect(find.text('Scrap Memo'), findsOneWidget);
-    expect(find.byType(TextField), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(2));
+    expect(find.text('思いついたことを書く'), findsOneWidget);
+    expect(find.text('メモと追記を検索'), findsOneWidget);
   });
 }

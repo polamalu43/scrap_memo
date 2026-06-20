@@ -8,8 +8,29 @@ final memoRepositoryProvider = Provider<MemoRepository>((ref) {
   return MemoRepository(ref.watch(appDatabaseProvider));
 });
 
+/// 検索バーに入力中の検索クエリ。
+class SearchQueryController extends Notifier<String> {
+  @override
+  String build() => '';
+
+  void updateQuery(String value) {
+    state = value;
+  }
+}
+
+final searchQueryProvider = NotifierProvider<SearchQueryController, String>(
+  SearchQueryController.new,
+);
+
 final memoListProvider = StreamProvider<List<Memo>>((ref) {
-  return ref.watch(memoRepositoryProvider).watchAllMemos();
+  final searchQuery = ref.watch(searchQueryProvider);
+  return ref
+      .watch(memoRepositoryProvider)
+      .watchAllMemos(searchQuery: searchQuery);
+});
+
+final pinnedMemoListProvider = StreamProvider<List<Memo>>((ref) {
+  return ref.watch(memoRepositoryProvider).watchPinnedMemos();
 });
 
 class MemoController extends Notifier<void> {
@@ -20,6 +41,10 @@ class MemoController extends Notifier<void> {
     final trimmed = content.trim();
     if (trimmed.isEmpty) return;
     await ref.read(memoRepositoryProvider).addMemo(trimmed);
+  }
+
+  Future<void> togglePin(Memo memo) async {
+    await ref.read(memoRepositoryProvider).setPinned(memo.id, !memo.isPinned);
   }
 }
 
