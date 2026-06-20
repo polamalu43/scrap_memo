@@ -21,7 +21,7 @@ class MemoRepository {
       );
     }
 
-    query.orderBy([(m) => OrderingTerm.desc(m.createdAt)]);
+    query.orderBy([(m) => OrderingTerm.asc(m.createdAt)]);
     return query.watch();
   }
 
