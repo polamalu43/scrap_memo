@@ -22,15 +22,15 @@ class Memos extends Table {
   DateTimeColumn get updatedAt => dateTime()();
 }
 
-@TableIndex(name: 'idx_threads_memo_id', columns: {#memoId})
+@TableIndex(name: 'idx_additions_memo_id', columns: {#memoId})
 @TableIndex(
-  name: 'idx_threads_memo_id_created_at',
+  name: 'idx_additions_memo_id_created_at',
   columns: {
     #memoId,
     IndexedColumn(#createdAt, orderBy: OrderingMode.asc),
   },
 )
-class Threads extends Table {
+class Additions extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get memoId => integer()();
   TextColumn get content => text()();
@@ -38,7 +38,7 @@ class Threads extends Table {
   DateTimeColumn get updatedAt => dateTime()();
 }
 
-@DriftDatabase(tables: [Memos, Threads])
+@DriftDatabase(tables: [Memos, Additions])
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
     : super(

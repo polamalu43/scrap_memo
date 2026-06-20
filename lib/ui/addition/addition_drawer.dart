@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
-import '../../providers/thread_providers.dart';
-import 'thread_input_bar.dart';
+import '../../providers/addition_providers.dart';
+import '../../utils/date_formatter.dart';
+import 'addition_input_bar.dart';
 
-class ThreadDrawer extends ConsumerWidget {
-  const ThreadDrawer({super.key, required this.memo});
+class AdditionDrawer extends ConsumerWidget {
+  const AdditionDrawer({super.key, required this.memo});
 
   final Memo memo;
 
@@ -16,7 +17,7 @@ class ThreadDrawer extends ConsumerWidget {
       child: Column(
         children: [
           AppBar(
-            title: const Text('スレッド'),
+            title: const Text('追記'),
             automaticallyImplyLeading: false,
             actions: [
               IconButton(
@@ -33,37 +34,38 @@ class ThreadDrawer extends ConsumerWidget {
             ),
           ),
           const Divider(height: 1),
-          Expanded(child: _ThreadList(memoId: memo.id)),
+          Expanded(child: _AdditionList(memoId: memo.id)),
           const Divider(height: 1),
-          ThreadInputBar(memoId: memo.id),
+          AdditionInputBar(memoId: memo.id),
         ],
       ),
     );
   }
 }
 
-class _ThreadList extends ConsumerWidget {
-  const _ThreadList({required this.memoId});
+class _AdditionList extends ConsumerWidget {
+  const _AdditionList({required this.memoId});
 
   final int memoId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final threadsAsync = ref.watch(threadListProvider(memoId));
+    final additionsAsync = ref.watch(additionListProvider(memoId));
 
-    return threadsAsync.when(
-      data: (threads) {
-        if (threads.isEmpty) {
-          return const Center(child: Text('スレッドはまだありません'));
+    return additionsAsync.when(
+      data: (additions) {
+        if (additions.isEmpty) {
+          return const Center(child: Text('追記はまだありません'));
         }
-        return ListView.builder(
+        return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: threads.length,
+          itemCount: additions.length,
+          separatorBuilder: (context, index) => const Divider(height: 1),
           itemBuilder: (context, index) {
-            final thread = threads[index];
+            final addition = additions[index];
             return ListTile(
-              title: Text(thread.content),
-              subtitle: Text(thread.createdAt.toString()),
+              title: Text(addition.content),
+              subtitle: Text(formatDateTime(addition.createdAt)),
             );
           },
         );

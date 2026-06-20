@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../providers/memo_providers.dart';
+import '../../providers/addition_providers.dart';
 import '../common/resize_handle.dart';
 
-class MemoInputBar extends ConsumerStatefulWidget {
-  const MemoInputBar({super.key});
+class AdditionInputBar extends ConsumerStatefulWidget {
+  const AdditionInputBar({super.key, required this.memoId});
+
+  final int memoId;
 
   @override
-  ConsumerState<MemoInputBar> createState() => _MemoInputBarState();
+  ConsumerState<AdditionInputBar> createState() => _AdditionInputBarState();
 }
 
-class _MemoInputBarState extends ConsumerState<MemoInputBar> {
+class _AdditionInputBarState extends ConsumerState<AdditionInputBar> {
   static const _minHeight = 48.0;
   static const _maxHeight = 400.0;
 
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
-  double _height = 56;
+  double _height = 48;
 
   @override
   void dispose() {
@@ -29,7 +31,9 @@ class _MemoInputBarState extends ConsumerState<MemoInputBar> {
   void _submit() {
     final text = _controller.text;
     if (text.trim().isEmpty) return;
-    ref.read(memoControllerProvider.notifier).addMemo(text);
+    ref
+        .read(additionControllerProvider.notifier)
+        .addAddition(widget.memoId, text);
     _controller.clear();
     _focusNode.requestFocus();
   }
@@ -59,13 +63,12 @@ class _MemoInputBarState extends ConsumerState<MemoInputBar> {
                     child: TextField(
                       controller: _controller,
                       focusNode: _focusNode,
-                      autofocus: true,
                       expands: true,
                       maxLines: null,
                       minLines: null,
                       textAlignVertical: TextAlignVertical.top,
                       decoration: const InputDecoration(
-                        hintText: '思いついたことを書く',
+                        hintText: '追記する',
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 12,

@@ -355,11 +355,12 @@ class MemosCompanion extends UpdateCompanion<Memo> {
   }
 }
 
-class $ThreadsTable extends Threads with TableInfo<$ThreadsTable, Thread> {
+class $AdditionsTable extends Additions
+    with TableInfo<$AdditionsTable, Addition> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ThreadsTable(this.attachedDatabase, [this._alias]);
+  $AdditionsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -427,10 +428,10 @@ class $ThreadsTable extends Threads with TableInfo<$ThreadsTable, Thread> {
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'threads';
+  static const String $name = 'additions';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Thread> instance, {
+    Insertable<Addition> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -476,9 +477,9 @@ class $ThreadsTable extends Threads with TableInfo<$ThreadsTable, Thread> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Thread map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Addition map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Thread(
+    return Addition(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -503,18 +504,18 @@ class $ThreadsTable extends Threads with TableInfo<$ThreadsTable, Thread> {
   }
 
   @override
-  $ThreadsTable createAlias(String alias) {
-    return $ThreadsTable(attachedDatabase, alias);
+  $AdditionsTable createAlias(String alias) {
+    return $AdditionsTable(attachedDatabase, alias);
   }
 }
 
-class Thread extends DataClass implements Insertable<Thread> {
+class Addition extends DataClass implements Insertable<Addition> {
   final int id;
   final int memoId;
   final String content;
   final DateTime createdAt;
   final DateTime updatedAt;
-  const Thread({
+  const Addition({
     required this.id,
     required this.memoId,
     required this.content,
@@ -532,8 +533,8 @@ class Thread extends DataClass implements Insertable<Thread> {
     return map;
   }
 
-  ThreadsCompanion toCompanion(bool nullToAbsent) {
-    return ThreadsCompanion(
+  AdditionsCompanion toCompanion(bool nullToAbsent) {
+    return AdditionsCompanion(
       id: Value(id),
       memoId: Value(memoId),
       content: Value(content),
@@ -542,12 +543,12 @@ class Thread extends DataClass implements Insertable<Thread> {
     );
   }
 
-  factory Thread.fromJson(
+  factory Addition.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Thread(
+    return Addition(
       id: serializer.fromJson<int>(json['id']),
       memoId: serializer.fromJson<int>(json['memoId']),
       content: serializer.fromJson<String>(json['content']),
@@ -567,21 +568,21 @@ class Thread extends DataClass implements Insertable<Thread> {
     };
   }
 
-  Thread copyWith({
+  Addition copyWith({
     int? id,
     int? memoId,
     String? content,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) => Thread(
+  }) => Addition(
     id: id ?? this.id,
     memoId: memoId ?? this.memoId,
     content: content ?? this.content,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
-  Thread copyWithCompanion(ThreadsCompanion data) {
-    return Thread(
+  Addition copyWithCompanion(AdditionsCompanion data) {
+    return Addition(
       id: data.id.present ? data.id.value : this.id,
       memoId: data.memoId.present ? data.memoId.value : this.memoId,
       content: data.content.present ? data.content.value : this.content,
@@ -592,7 +593,7 @@ class Thread extends DataClass implements Insertable<Thread> {
 
   @override
   String toString() {
-    return (StringBuffer('Thread(')
+    return (StringBuffer('Addition(')
           ..write('id: $id, ')
           ..write('memoId: $memoId, ')
           ..write('content: $content, ')
@@ -607,7 +608,7 @@ class Thread extends DataClass implements Insertable<Thread> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Thread &&
+      (other is Addition &&
           other.id == this.id &&
           other.memoId == this.memoId &&
           other.content == this.content &&
@@ -615,20 +616,20 @@ class Thread extends DataClass implements Insertable<Thread> {
           other.updatedAt == this.updatedAt);
 }
 
-class ThreadsCompanion extends UpdateCompanion<Thread> {
+class AdditionsCompanion extends UpdateCompanion<Addition> {
   final Value<int> id;
   final Value<int> memoId;
   final Value<String> content;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
-  const ThreadsCompanion({
+  const AdditionsCompanion({
     this.id = const Value.absent(),
     this.memoId = const Value.absent(),
     this.content = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
-  ThreadsCompanion.insert({
+  AdditionsCompanion.insert({
     this.id = const Value.absent(),
     required int memoId,
     required String content,
@@ -638,7 +639,7 @@ class ThreadsCompanion extends UpdateCompanion<Thread> {
        content = Value(content),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
-  static Insertable<Thread> custom({
+  static Insertable<Addition> custom({
     Expression<int>? id,
     Expression<int>? memoId,
     Expression<String>? content,
@@ -654,14 +655,14 @@ class ThreadsCompanion extends UpdateCompanion<Thread> {
     });
   }
 
-  ThreadsCompanion copyWith({
+  AdditionsCompanion copyWith({
     Value<int>? id,
     Value<int>? memoId,
     Value<String>? content,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
   }) {
-    return ThreadsCompanion(
+    return AdditionsCompanion(
       id: id ?? this.id,
       memoId: memoId ?? this.memoId,
       content: content ?? this.content,
@@ -693,7 +694,7 @@ class ThreadsCompanion extends UpdateCompanion<Thread> {
 
   @override
   String toString() {
-    return (StringBuffer('ThreadsCompanion(')
+    return (StringBuffer('AdditionsCompanion(')
           ..write('id: $id, ')
           ..write('memoId: $memoId, ')
           ..write('content: $content, ')
@@ -708,7 +709,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $MemosTable memos = $MemosTable(this);
-  late final $ThreadsTable threads = $ThreadsTable(this);
+  late final $AdditionsTable additions = $AdditionsTable(this);
   late final Index idxMemosCreatedAt = Index(
     'idx_memos_created_at',
     'CREATE INDEX idx_memos_created_at ON memos (created_at DESC)',
@@ -717,13 +718,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_memos_pinned_created_at',
     'CREATE INDEX idx_memos_pinned_created_at ON memos (is_pinned, created_at DESC)',
   );
-  late final Index idxThreadsMemoId = Index(
-    'idx_threads_memo_id',
-    'CREATE INDEX idx_threads_memo_id ON threads (memo_id)',
+  late final Index idxAdditionsMemoId = Index(
+    'idx_additions_memo_id',
+    'CREATE INDEX idx_additions_memo_id ON additions (memo_id)',
   );
-  late final Index idxThreadsMemoIdCreatedAt = Index(
-    'idx_threads_memo_id_created_at',
-    'CREATE INDEX idx_threads_memo_id_created_at ON threads (memo_id, created_at ASC)',
+  late final Index idxAdditionsMemoIdCreatedAt = Index(
+    'idx_additions_memo_id_created_at',
+    'CREATE INDEX idx_additions_memo_id_created_at ON additions (memo_id, created_at ASC)',
   );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -731,11 +732,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     memos,
-    threads,
+    additions,
     idxMemosCreatedAt,
     idxMemosPinnedCreatedAt,
-    idxThreadsMemoId,
-    idxThreadsMemoIdCreatedAt,
+    idxAdditionsMemoId,
+    idxAdditionsMemoIdCreatedAt,
   ];
 }
 
@@ -926,16 +927,16 @@ typedef $$MemosTableProcessedTableManager =
       Memo,
       PrefetchHooks Function()
     >;
-typedef $$ThreadsTableCreateCompanionBuilder =
-    ThreadsCompanion Function({
+typedef $$AdditionsTableCreateCompanionBuilder =
+    AdditionsCompanion Function({
       Value<int> id,
       required int memoId,
       required String content,
       required DateTime createdAt,
       required DateTime updatedAt,
     });
-typedef $$ThreadsTableUpdateCompanionBuilder =
-    ThreadsCompanion Function({
+typedef $$AdditionsTableUpdateCompanionBuilder =
+    AdditionsCompanion Function({
       Value<int> id,
       Value<int> memoId,
       Value<String> content,
@@ -943,9 +944,9 @@ typedef $$ThreadsTableUpdateCompanionBuilder =
       Value<DateTime> updatedAt,
     });
 
-class $$ThreadsTableFilterComposer
-    extends Composer<_$AppDatabase, $ThreadsTable> {
-  $$ThreadsTableFilterComposer({
+class $$AdditionsTableFilterComposer
+    extends Composer<_$AppDatabase, $AdditionsTable> {
+  $$AdditionsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -978,9 +979,9 @@ class $$ThreadsTableFilterComposer
   );
 }
 
-class $$ThreadsTableOrderingComposer
-    extends Composer<_$AppDatabase, $ThreadsTable> {
-  $$ThreadsTableOrderingComposer({
+class $$AdditionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AdditionsTable> {
+  $$AdditionsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -1013,9 +1014,9 @@ class $$ThreadsTableOrderingComposer
   );
 }
 
-class $$ThreadsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ThreadsTable> {
-  $$ThreadsTableAnnotationComposer({
+class $$AdditionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AdditionsTable> {
+  $$AdditionsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -1038,32 +1039,32 @@ class $$ThreadsTableAnnotationComposer
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
-class $$ThreadsTableTableManager
+class $$AdditionsTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $ThreadsTable,
-          Thread,
-          $$ThreadsTableFilterComposer,
-          $$ThreadsTableOrderingComposer,
-          $$ThreadsTableAnnotationComposer,
-          $$ThreadsTableCreateCompanionBuilder,
-          $$ThreadsTableUpdateCompanionBuilder,
-          (Thread, BaseReferences<_$AppDatabase, $ThreadsTable, Thread>),
-          Thread,
+          $AdditionsTable,
+          Addition,
+          $$AdditionsTableFilterComposer,
+          $$AdditionsTableOrderingComposer,
+          $$AdditionsTableAnnotationComposer,
+          $$AdditionsTableCreateCompanionBuilder,
+          $$AdditionsTableUpdateCompanionBuilder,
+          (Addition, BaseReferences<_$AppDatabase, $AdditionsTable, Addition>),
+          Addition,
           PrefetchHooks Function()
         > {
-  $$ThreadsTableTableManager(_$AppDatabase db, $ThreadsTable table)
+  $$AdditionsTableTableManager(_$AppDatabase db, $AdditionsTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$ThreadsTableFilterComposer($db: db, $table: table),
+              $$AdditionsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$ThreadsTableOrderingComposer($db: db, $table: table),
+              $$AdditionsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$ThreadsTableAnnotationComposer($db: db, $table: table),
+              $$AdditionsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -1071,7 +1072,7 @@ class $$ThreadsTableTableManager
                 Value<String> content = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
-              }) => ThreadsCompanion(
+              }) => AdditionsCompanion(
                 id: id,
                 memoId: memoId,
                 content: content,
@@ -1085,7 +1086,7 @@ class $$ThreadsTableTableManager
                 required String content,
                 required DateTime createdAt,
                 required DateTime updatedAt,
-              }) => ThreadsCompanion.insert(
+              }) => AdditionsCompanion.insert(
                 id: id,
                 memoId: memoId,
                 content: content,
@@ -1100,18 +1101,18 @@ class $$ThreadsTableTableManager
       );
 }
 
-typedef $$ThreadsTableProcessedTableManager =
+typedef $$AdditionsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $ThreadsTable,
-      Thread,
-      $$ThreadsTableFilterComposer,
-      $$ThreadsTableOrderingComposer,
-      $$ThreadsTableAnnotationComposer,
-      $$ThreadsTableCreateCompanionBuilder,
-      $$ThreadsTableUpdateCompanionBuilder,
-      (Thread, BaseReferences<_$AppDatabase, $ThreadsTable, Thread>),
-      Thread,
+      $AdditionsTable,
+      Addition,
+      $$AdditionsTableFilterComposer,
+      $$AdditionsTableOrderingComposer,
+      $$AdditionsTableAnnotationComposer,
+      $$AdditionsTableCreateCompanionBuilder,
+      $$AdditionsTableUpdateCompanionBuilder,
+      (Addition, BaseReferences<_$AppDatabase, $AdditionsTable, Addition>),
+      Addition,
       PrefetchHooks Function()
     >;
 
@@ -1120,6 +1121,6 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$MemosTableTableManager get memos =>
       $$MemosTableTableManager(_db, _db.memos);
-  $$ThreadsTableTableManager get threads =>
-      $$ThreadsTableTableManager(_db, _db.threads);
+  $$AdditionsTableTableManager get additions =>
+      $$AdditionsTableTableManager(_db, _db.additions);
 }

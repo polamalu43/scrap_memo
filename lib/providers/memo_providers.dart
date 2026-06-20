@@ -27,7 +27,7 @@ final memoControllerProvider = NotifierProvider<MemoController, void>(
   MemoController.new,
 );
 
-/// メモ詳細（スレッド）を表示中のメモ。未選択時は null。
+/// メモ詳細（追記）を表示中のメモ。未選択時は null。
 class SelectedMemoController extends Notifier<Memo?> {
   @override
   Memo? build() => null;

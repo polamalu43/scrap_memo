@@ -3,23 +3,50 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
 import '../../providers/memo_providers.dart';
-import '../thread/thread_drawer.dart';
+import '../../utils/date_formatter.dart';
+import '../addition/addition_drawer.dart';
+import '../common/resize_handle.dart';
 import 'memo_input_bar.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  static const _minDrawerWidth = 240.0;
+
+  double _drawerWidth = 360;
+
+  @override
+  Widget build(BuildContext context) {
     final selectedMemo = ref.watch(selectedMemoProvider);
+    final maxDrawerWidth = MediaQuery.of(context).size.width * 0.95;
+    final drawerWidth = _drawerWidth.clamp(_minDrawerWidth, maxDrawerWidth);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Scrap Memo')),
+      appBar: AppBar(title: const Text('Scrap Memo'), actions: const []),
       endDrawer: selectedMemo == null
           ? null
           : SizedBox(
-              width: MediaQuery.of(context).size.width * 0.85,
-              child: ThreadDrawer(memo: selectedMemo),
+              width: drawerWidth,
+              child: Row(
+                children: [
+                  HorizontalResizeHandle(
+                    onDragDelta: (dx) {
+                      setState(() {
+                        _drawerWidth = (_drawerWidth - dx).clamp(
+                          _minDrawerWidth,
+                          maxDrawerWidth,
+                        );
+                      });
+                    },
+                  ),
+                  Expanded(child: AdditionDrawer(memo: selectedMemo)),
+                ],
+              ),
             ),
       body: Column(
         children: [
@@ -42,10 +69,10 @@ class _MemoTimeline extends ConsumerWidget {
         if (memos.isEmpty) {
           return const Center(child: Text('まだメモがありません'));
         }
-        return ListView.builder(
-          reverse: true,
+        return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 8),
           itemCount: memos.length,
+          separatorBuilder: (context, index) => const Divider(height: 1),
           itemBuilder: (context, index) {
             final memo = memos[index];
             return _MemoTile(memo: memo);
@@ -67,7 +94,7 @@ class _MemoTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
       title: Text(memo.content),
-      subtitle: Text(memo.createdAt.toString()),
+      subtitle: Text(formatDateTime(memo.createdAt)),
       onTap: () {
         ref.read(selectedMemoProvider.notifier).select(memo);
         Scaffold.of(context).openEndDrawer();
