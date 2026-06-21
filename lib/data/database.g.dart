@@ -394,6 +394,21 @@ class $AdditionsTable extends Additions
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _isBookmarkedMeta = const VerificationMeta(
+    'isBookmarked',
+  );
+  @override
+  late final GeneratedColumn<bool> isBookmarked = GeneratedColumn<bool>(
+    'is_bookmarked',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_bookmarked" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -421,6 +436,7 @@ class $AdditionsTable extends Additions
     id,
     memoId,
     content,
+    isBookmarked,
     createdAt,
     updatedAt,
   ];
@@ -454,6 +470,15 @@ class $AdditionsTable extends Additions
       );
     } else if (isInserting) {
       context.missing(_contentMeta);
+    }
+    if (data.containsKey('is_bookmarked')) {
+      context.handle(
+        _isBookmarkedMeta,
+        isBookmarked.isAcceptableOrUnknown(
+          data['is_bookmarked']!,
+          _isBookmarkedMeta,
+        ),
+      );
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -492,6 +517,10 @@ class $AdditionsTable extends Additions
         DriftSqlType.string,
         data['${effectivePrefix}content'],
       )!,
+      isBookmarked: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_bookmarked'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -513,12 +542,14 @@ class Addition extends DataClass implements Insertable<Addition> {
   final int id;
   final int memoId;
   final String content;
+  final bool isBookmarked;
   final DateTime createdAt;
   final DateTime updatedAt;
   const Addition({
     required this.id,
     required this.memoId,
     required this.content,
+    required this.isBookmarked,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -528,6 +559,7 @@ class Addition extends DataClass implements Insertable<Addition> {
     map['id'] = Variable<int>(id);
     map['memo_id'] = Variable<int>(memoId);
     map['content'] = Variable<String>(content);
+    map['is_bookmarked'] = Variable<bool>(isBookmarked);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -538,6 +570,7 @@ class Addition extends DataClass implements Insertable<Addition> {
       id: Value(id),
       memoId: Value(memoId),
       content: Value(content),
+      isBookmarked: Value(isBookmarked),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -552,6 +585,7 @@ class Addition extends DataClass implements Insertable<Addition> {
       id: serializer.fromJson<int>(json['id']),
       memoId: serializer.fromJson<int>(json['memoId']),
       content: serializer.fromJson<String>(json['content']),
+      isBookmarked: serializer.fromJson<bool>(json['isBookmarked']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -563,6 +597,7 @@ class Addition extends DataClass implements Insertable<Addition> {
       'id': serializer.toJson<int>(id),
       'memoId': serializer.toJson<int>(memoId),
       'content': serializer.toJson<String>(content),
+      'isBookmarked': serializer.toJson<bool>(isBookmarked),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -572,12 +607,14 @@ class Addition extends DataClass implements Insertable<Addition> {
     int? id,
     int? memoId,
     String? content,
+    bool? isBookmarked,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => Addition(
     id: id ?? this.id,
     memoId: memoId ?? this.memoId,
     content: content ?? this.content,
+    isBookmarked: isBookmarked ?? this.isBookmarked,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -586,6 +623,9 @@ class Addition extends DataClass implements Insertable<Addition> {
       id: data.id.present ? data.id.value : this.id,
       memoId: data.memoId.present ? data.memoId.value : this.memoId,
       content: data.content.present ? data.content.value : this.content,
+      isBookmarked: data.isBookmarked.present
+          ? data.isBookmarked.value
+          : this.isBookmarked,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -597,6 +637,7 @@ class Addition extends DataClass implements Insertable<Addition> {
           ..write('id: $id, ')
           ..write('memoId: $memoId, ')
           ..write('content: $content, ')
+          ..write('isBookmarked: $isBookmarked, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -604,7 +645,8 @@ class Addition extends DataClass implements Insertable<Addition> {
   }
 
   @override
-  int get hashCode => Object.hash(id, memoId, content, createdAt, updatedAt);
+  int get hashCode =>
+      Object.hash(id, memoId, content, isBookmarked, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -612,6 +654,7 @@ class Addition extends DataClass implements Insertable<Addition> {
           other.id == this.id &&
           other.memoId == this.memoId &&
           other.content == this.content &&
+          other.isBookmarked == this.isBookmarked &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -620,12 +663,14 @@ class AdditionsCompanion extends UpdateCompanion<Addition> {
   final Value<int> id;
   final Value<int> memoId;
   final Value<String> content;
+  final Value<bool> isBookmarked;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const AdditionsCompanion({
     this.id = const Value.absent(),
     this.memoId = const Value.absent(),
     this.content = const Value.absent(),
+    this.isBookmarked = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -633,6 +678,7 @@ class AdditionsCompanion extends UpdateCompanion<Addition> {
     this.id = const Value.absent(),
     required int memoId,
     required String content,
+    this.isBookmarked = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
   }) : memoId = Value(memoId),
@@ -643,6 +689,7 @@ class AdditionsCompanion extends UpdateCompanion<Addition> {
     Expression<int>? id,
     Expression<int>? memoId,
     Expression<String>? content,
+    Expression<bool>? isBookmarked,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
   }) {
@@ -650,6 +697,7 @@ class AdditionsCompanion extends UpdateCompanion<Addition> {
       if (id != null) 'id': id,
       if (memoId != null) 'memo_id': memoId,
       if (content != null) 'content': content,
+      if (isBookmarked != null) 'is_bookmarked': isBookmarked,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -659,6 +707,7 @@ class AdditionsCompanion extends UpdateCompanion<Addition> {
     Value<int>? id,
     Value<int>? memoId,
     Value<String>? content,
+    Value<bool>? isBookmarked,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
   }) {
@@ -666,6 +715,7 @@ class AdditionsCompanion extends UpdateCompanion<Addition> {
       id: id ?? this.id,
       memoId: memoId ?? this.memoId,
       content: content ?? this.content,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -683,6 +733,9 @@ class AdditionsCompanion extends UpdateCompanion<Addition> {
     if (content.present) {
       map['content'] = Variable<String>(content.value);
     }
+    if (isBookmarked.present) {
+      map['is_bookmarked'] = Variable<bool>(isBookmarked.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -698,6 +751,7 @@ class AdditionsCompanion extends UpdateCompanion<Addition> {
           ..write('id: $id, ')
           ..write('memoId: $memoId, ')
           ..write('content: $content, ')
+          ..write('isBookmarked: $isBookmarked, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -932,6 +986,7 @@ typedef $$AdditionsTableCreateCompanionBuilder =
       Value<int> id,
       required int memoId,
       required String content,
+      Value<bool> isBookmarked,
       required DateTime createdAt,
       required DateTime updatedAt,
     });
@@ -940,6 +995,7 @@ typedef $$AdditionsTableUpdateCompanionBuilder =
       Value<int> id,
       Value<int> memoId,
       Value<String> content,
+      Value<bool> isBookmarked,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
@@ -965,6 +1021,11 @@ class $$AdditionsTableFilterComposer
 
   ColumnFilters<String> get content => $composableBuilder(
     column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isBookmarked => $composableBuilder(
+    column: $table.isBookmarked,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1003,6 +1064,11 @@ class $$AdditionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isBookmarked => $composableBuilder(
+    column: $table.isBookmarked,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -1031,6 +1097,11 @@ class $$AdditionsTableAnnotationComposer
 
   GeneratedColumn<String> get content =>
       $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<bool> get isBookmarked => $composableBuilder(
+    column: $table.isBookmarked,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1070,12 +1141,14 @@ class $$AdditionsTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int> memoId = const Value.absent(),
                 Value<String> content = const Value.absent(),
+                Value<bool> isBookmarked = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => AdditionsCompanion(
                 id: id,
                 memoId: memoId,
                 content: content,
+                isBookmarked: isBookmarked,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),
@@ -1084,12 +1157,14 @@ class $$AdditionsTableTableManager
                 Value<int> id = const Value.absent(),
                 required int memoId,
                 required String content,
+                Value<bool> isBookmarked = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
               }) => AdditionsCompanion.insert(
                 id: id,
                 memoId: memoId,
                 content: content,
+                isBookmarked: isBookmarked,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),

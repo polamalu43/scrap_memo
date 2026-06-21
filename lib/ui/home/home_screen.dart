@@ -8,7 +8,7 @@ import '../addition/addition_drawer.dart';
 import '../common/resize_handle.dart';
 import 'memo_input_bar.dart';
 import 'memo_search_bar.dart';
-import 'pinned_memo_list.dart';
+import 'pinned_bookmark_area.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -53,7 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: Column(
         children: [
           const MemoSearchBar(),
-          const PinnedMemoList(),
+          const PinnedBookmarkArea(),
           const Divider(height: 1),
           Expanded(child: _MemoTimeline()),
           const Divider(height: 1),
@@ -105,9 +105,14 @@ class _MemoTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isEdited = memo.updatedAt.isAfter(memo.createdAt);
     return ListTile(
       title: Text(memo.content),
-      subtitle: Text(formatDateTime(memo.createdAt)),
+      subtitle: Text(
+        isEdited
+            ? '${formatDateTime(memo.createdAt)} (編集済)'
+            : formatDateTime(memo.createdAt),
+      ),
       trailing: IconButton(
         icon: Icon(memo.isPinned ? Icons.push_pin : Icons.push_pin_outlined),
         onPressed: () => ref.read(memoControllerProvider.notifier).togglePin(memo),
@@ -116,6 +121,8 @@ class _MemoTile extends ConsumerWidget {
         ref.read(selectedMemoProvider.notifier).select(memo);
         Scaffold.of(context).openEndDrawer();
       },
+      onLongPress: () =>
+          ref.read(editingMemoProvider.notifier).startEdit(memo),
     );
   }
 }

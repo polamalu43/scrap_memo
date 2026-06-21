@@ -22,7 +22,10 @@ class AdditionDrawer extends ConsumerWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  ref.read(editingAdditionProvider.notifier).cancelEdit();
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           ),
@@ -63,15 +66,39 @@ class _AdditionList extends ConsumerWidget {
           separatorBuilder: (context, index) => const Divider(height: 1),
           itemBuilder: (context, index) {
             final addition = additions[index];
-            return ListTile(
-              title: Text(addition.content),
-              subtitle: Text(formatDateTime(addition.createdAt)),
-            );
+            return _AdditionTile(addition: addition);
           },
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stackTrace) => Center(child: Text('エラー: $error')),
+    );
+  }
+}
+
+class _AdditionTile extends ConsumerWidget {
+  const _AdditionTile({required this.addition});
+
+  final Addition addition;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isEdited = addition.updatedAt.isAfter(addition.createdAt);
+    return ListTile(
+      title: Text(addition.content),
+      subtitle: Text(
+        isEdited
+            ? '${formatDateTime(addition.createdAt)} (編集済)'
+            : formatDateTime(addition.createdAt),
+      ),
+      trailing: IconButton(
+        icon: Icon(addition.isBookmarked ? Icons.star : Icons.star_border),
+        onPressed: () => ref
+            .read(additionControllerProvider.notifier)
+            .toggleBookmark(addition),
+      ),
+      onLongPress: () =>
+          ref.read(editingAdditionProvider.notifier).startEdit(addition),
     );
   }
 }

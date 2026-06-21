@@ -48,4 +48,13 @@ class MemoRepository {
       MemosCompanion(isPinned: Value(isPinned)),
     );
   }
+
+  Future<void> updateContent(int id, String content) {
+    return (_db.update(_db.memos)..where((m) => m.id.equals(id))).write(
+      MemosCompanion(
+        content: Value(content),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
 }

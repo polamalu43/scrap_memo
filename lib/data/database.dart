@@ -34,6 +34,8 @@ class Additions extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get memoId => integer()();
   TextColumn get content => text()();
+  BoolColumn get isBookmarked =>
+      boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 }
@@ -52,5 +54,15 @@ class AppDatabase extends _$AppDatabase {
       );
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.addColumn(additions, additions.isBookmarked);
+      }
+    },
+  );
 }

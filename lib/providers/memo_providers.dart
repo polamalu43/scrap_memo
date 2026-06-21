@@ -46,6 +46,12 @@ class MemoController extends Notifier<void> {
   Future<void> togglePin(Memo memo) async {
     await ref.read(memoRepositoryProvider).setPinned(memo.id, !memo.isPinned);
   }
+
+  Future<void> updateMemo(int id, String content) async {
+    final trimmed = content.trim();
+    if (trimmed.isEmpty) return;
+    await ref.read(memoRepositoryProvider).updateContent(id, trimmed);
+  }
 }
 
 final memoControllerProvider = NotifierProvider<MemoController, void>(
@@ -64,4 +70,22 @@ class SelectedMemoController extends Notifier<Memo?> {
 
 final selectedMemoProvider = NotifierProvider<SelectedMemoController, Memo?>(
   SelectedMemoController.new,
+);
+
+/// 編集中のメモ。null は編集モードでないことを示す。
+class EditingMemoController extends Notifier<Memo?> {
+  @override
+  Memo? build() => null;
+
+  void startEdit(Memo memo) {
+    state = memo;
+  }
+
+  void cancelEdit() {
+    state = null;
+  }
+}
+
+final editingMemoProvider = NotifierProvider<EditingMemoController, Memo?>(
+  EditingMemoController.new,
 );

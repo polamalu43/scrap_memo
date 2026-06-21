@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/database.dart';
 import '../../providers/addition_providers.dart';
 import '../common/resize_handle.dart';
 
@@ -31,15 +32,31 @@ class _AdditionInputBarState extends ConsumerState<AdditionInputBar> {
   void _submit() {
     final text = _controller.text;
     if (text.trim().isEmpty) return;
-    ref
-        .read(additionControllerProvider.notifier)
-        .addAddition(widget.memoId, text);
+    final editingAddition = ref.read(editingAdditionProvider);
+    if (editingAddition != null) {
+      ref
+          .read(additionControllerProvider.notifier)
+          .updateAddition(editingAddition.id, text);
+      ref.read(editingAdditionProvider.notifier).cancelEdit();
+    } else {
+      ref
+          .read(additionControllerProvider.notifier)
+          .addAddition(widget.memoId, text);
+    }
     _controller.clear();
     _focusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<Addition?>(editingAdditionProvider, (previous, next) {
+      if (next != null) {
+        _controller.text = next.content;
+        _focusNode.requestFocus();
+      }
+    });
+    final isEditing = ref.watch(editingAdditionProvider) != null;
+
     return SafeArea(
       top: false,
       child: Padding(
@@ -67,10 +84,10 @@ class _AdditionInputBarState extends ConsumerState<AdditionInputBar> {
                       maxLines: null,
                       minLines: null,
                       textAlignVertical: TextAlignVertical.top,
-                      decoration: const InputDecoration(
-                        hintText: '追記する',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
+                      decoration: InputDecoration(
+                        hintText: isEditing ? '編集する' : '追記する',
+                        border: const OutlineInputBorder(),
+                        contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 8,
                         ),
@@ -78,8 +95,18 @@ class _AdditionInputBarState extends ConsumerState<AdditionInputBar> {
                     ),
                   ),
                 ),
+                if (isEditing)
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    tooltip: '編集をキャンセル',
+                    onPressed: () {
+                      ref.read(editingAdditionProvider.notifier).cancelEdit();
+                      _controller.clear();
+                    },
+                  ),
                 IconButton(
-                  icon: const Icon(Icons.send),
+                  icon: Icon(isEditing ? Icons.check : Icons.send),
+                  tooltip: isEditing ? '更新' : '送信',
                   onPressed: _submit,
                 ),
               ],
