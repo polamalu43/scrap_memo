@@ -15,12 +15,11 @@ class AdditionInputBar extends ConsumerStatefulWidget {
 }
 
 class _AdditionInputBarState extends ConsumerState<AdditionInputBar> {
-  static const _minHeight = 48.0;
-  static const _maxHeight = 400.0;
-
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   double _height = 48;
+  double _minHeight = 48.0;
+  double _maxHeight = 400.0;
 
   @override
   void dispose() {
@@ -49,6 +48,10 @@ class _AdditionInputBarState extends ConsumerState<AdditionInputBar> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    _minHeight = screenHeight * 0.06;
+    _maxHeight = screenHeight * 0.40;
+
     ref.listen<Addition?>(editingAdditionProvider, (previous, next) {
       if (next != null) {
         _controller.text = next.content;
@@ -105,8 +108,8 @@ class _AdditionInputBarState extends ConsumerState<AdditionInputBar> {
                     },
                   ),
                 IconButton(
-                  icon: Icon(isEditing ? Icons.check : Icons.send),
-                  tooltip: isEditing ? '更新' : '送信',
+                  icon: Icon(isEditing ? Icons.check : Icons.add),
+                  tooltip: isEditing ? '更新' : '追加',
                   onPressed: _submit,
                 ),
               ],

@@ -97,14 +97,14 @@ class _SegmentTab extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? colorScheme.primaryContainer : null,
+          color: isSelected ? colorScheme.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? colorScheme.onPrimaryContainer : null,
-            fontWeight: isSelected ? FontWeight.bold : null,
+            color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),
@@ -148,11 +148,18 @@ class _PinnedCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       width: 160,
       child: Card(
         margin: EdgeInsets.zero,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: colorScheme.outline),
+        ),
         child: InkWell(
+          borderRadius: BorderRadius.circular(8),
           onTap: () => _openAdditionDrawer(context, ref, memo),
           child: Padding(
             padding: const EdgeInsets.all(8),
@@ -205,11 +212,18 @@ class _BookmarkedCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       width: 160,
       child: Card(
         margin: EdgeInsets.zero,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: colorScheme.outline),
+        ),
         child: InkWell(
+          borderRadius: BorderRadius.circular(8),
           onTap: () => _openAdditionDrawer(context, ref, item.parentMemo),
           child: Padding(
             padding: const EdgeInsets.all(8),

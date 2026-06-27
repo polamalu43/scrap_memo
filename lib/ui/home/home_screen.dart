@@ -20,13 +20,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   static const _minDrawerWidth = 240.0;
 
-  double _drawerWidth = 360;
+  double? _drawerWidth;
 
   @override
   Widget build(BuildContext context) {
     final selectedMemo = ref.watch(selectedMemoProvider);
-    final maxDrawerWidth = MediaQuery.of(context).size.width * 0.95;
-    final drawerWidth = _drawerWidth.clamp(_minDrawerWidth, maxDrawerWidth);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxDrawerWidth = screenWidth * 0.95;
+    _drawerWidth ??= screenWidth * 0.85;
+    final drawerWidth = _drawerWidth!.clamp(_minDrawerWidth, maxDrawerWidth);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Scrap Memo'), actions: const []),
@@ -39,7 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   HorizontalResizeHandle(
                     onDragDelta: (dx) {
                       setState(() {
-                        _drawerWidth = (_drawerWidth - dx).clamp(
+                        _drawerWidth = (_drawerWidth! - dx).clamp(
                           _minDrawerWidth,
                           maxDrawerWidth,
                         );
@@ -112,6 +114,10 @@ class _MemoTile extends ConsumerWidget {
         isEdited
             ? '${formatDateTime(memo.createdAt)} (編集済)'
             : formatDateTime(memo.createdAt),
+        style: TextStyle(
+          fontSize: 11,
+          color: Theme.of(context).colorScheme.outline,
+        ),
       ),
       trailing: IconButton(
         icon: Icon(memo.isPinned ? Icons.push_pin : Icons.push_pin_outlined),

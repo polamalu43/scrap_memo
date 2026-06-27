@@ -33,7 +33,10 @@ class AdditionDrawer extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text(memo.content),
+              child: Text(
+                memo.content,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
           ),
           const Divider(height: 1),
@@ -90,6 +93,10 @@ class _AdditionTile extends ConsumerWidget {
         isEdited
             ? '${formatDateTime(addition.createdAt)} (編集済)'
             : formatDateTime(addition.createdAt),
+        style: TextStyle(
+          fontSize: 11,
+          color: Theme.of(context).colorScheme.outline,
+        ),
       ),
       trailing: IconButton(
         icon: Icon(addition.isBookmarked ? Icons.star : Icons.star_border),
